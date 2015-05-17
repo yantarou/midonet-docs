@@ -13,7 +13,7 @@ zone and are alive.
 ----
 # midonet-cli
 midonet> list tunnel-zone
-tzone tzone0 name gre type gre
+tzone tzone0 name tz type vxlan
 midonet> tunnel-zone tzone0 list member
 zone tzone0 host host0 address 192.168.0.1
 zone tzone0 host host1 address 192.168.0.2
@@ -26,14 +26,17 @@ host host2 name host-c alive true
 host host3 name host-d alive true
 ----
 
-Check if packets are transmitted over the tunnel interface, `tngre-overlay` in
-case of GRE, `tnvxlan-overlay` in case of VXLAN tunnel.
+Check if packets are transmitted over the tunnel interface, and ensure that
+there are no errors or dropped packets.
+
+Check the `tngre-overlay` port in case of GRE protocol, or the `tnvxlan-overlay`
+port in case of VXLAN protocol.
 
 ====
 [literal,subs="quotes"]
 ----
 # mm-dpctl --show-dp midonet | grep overlay
-Port #1 "tngre-overlay"  Gre  Stats{*rxPackets=508157678*, *txPackets=*398704120*, rxBytes=291245619484, txBytes=318474308439, rxErrors=0, txErrors=0, rxDropped=0, txDropped=0}
+Port #1 "tngre-overlay"  Gre  Stats{*rxPackets=508157678*, *txPackets=398704120*, rxBytes=291245619484, txBytes=318474308439, rxErrors=0, txErrors=0, rxDropped=0, txDropped=0}
 Port #2 "tnvxlan-overlay"  VXLan  Stats{rxPackets=0, txPackets=0, rxBytes=0, txBytes=0, rxErrors=0, txErrors=0, rxDropped=0, txDropped=0}
 ----
 ====
@@ -99,7 +102,21 @@ Host: id=17ef018f-de8b-431b-89f0-b5472f176769
 ----
 ====
 
-
-
-== Datapath
 == MTU
+
+The MTU of VM instances has to account for the tunnel protocol's overhead to
+avoid fragmentation in the underlay network.
+
+This adjusted MTU is advertised automatically by MidoNet via DHCP, but may not
+be applied depending on the VM's operating system being used.
+
+Ensure that the VM's MTU is set accordingly to the underlay's MTU.
+
+[options="header"]
+|====
+|Underlay MTU |Tunnel Protocol |Protocol Overhead |VM's MTU
+|1500 bytes   |VxLAN           |50 bytes          |1450 bytes
+|1500 bytes   |GRE             |46 bytes          |1455 bytes
+|9000 bytes   |VxLAN           |50 bytes          |8950 bytes
+|9000 bytes   |GRE             |46 bytes          |8955 bytes
+|====

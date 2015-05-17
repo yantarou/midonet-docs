@@ -8,6 +8,8 @@ include::preface_{lang}.adoc[leveloffset=+1]
 include::overall_approach/chapter_overall_approach_{lang}.adoc[leveloffset=+1]
 include::overall_approach/section_underlay_network_{lang}.adoc[leveloffset=+2]
 include::overall_approach/section_overlay_network_{lang}.adoc[leveloffset=+2]
+include::overall_approach/section_topology_simulation_{lang}.adoc[leveloffset=+2]
+include::overall_approach/section_virtual_topology_{lang}.adoc[leveloffset=+2]
 
 // Common Topics
 include::common_topics/chapter_common_topics_{lang}.adoc[leveloffset=+1]
